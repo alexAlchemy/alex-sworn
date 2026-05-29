@@ -17,12 +17,47 @@ npm run build
 
 ## Cloudflare Deployment
 
-This app is currently a static Vite build, so Cloudflare Pages is the simplest fit:
+This app is deployed publicly on Cloudflare Pages:
+
+- Production URL: https://alex-sworn.pages.dev
+- Cloudflare Pages project: `alex-sworn`
+
+It is currently a static Vite build, so Cloudflare Pages is the simplest fit:
 
 - Build command: `npm run build`
 - Build output directory: `dist`
+- Local deploy command: `npm run deploy`
 
-The `npm run deploy` script builds locally and deploys `dist` with Wrangler Pages. If a backend arrives later, add Pages Functions or move API routes into a Worker. R2 is a good fit for hosted oracle JSON, exports, or user-uploaded assets; D1 is a better fit for relational campaign data.
+The deploy script builds locally and uploads the generated `dist` folder with Wrangler Pages:
+
+```bash
+npm run deploy
+```
+
+If the Pages project does not exist yet, create it once:
+
+```bash
+npx wrangler pages project create alex-sworn --production-branch main
+```
+
+Then deploy:
+
+```bash
+npx wrangler pages deploy dist --project-name alex-sworn
+```
+
+If a backend arrives later, add Pages Functions or move API routes into a Worker. R2 is a good fit for hosted oracle JSON, exports, or user-uploaded assets; D1 is a better fit for relational campaign data.
+
+## Public Repo Notes
+
+This codebase is safe to keep public in its current form:
+
+- No API keys, secrets, tokens, or backend credentials are committed.
+- The app is static client-side code served from Cloudflare Pages.
+- There are no Cloudflare bindings, Workers secrets, D1 databases, KV namespaces, or R2 credentials in the repo.
+- Wrangler authentication lives outside the project in the local developer environment.
+
+If backend features are added later, keep secrets in Cloudflare dashboard/Wrangler secrets and out of source control.
 
 ## Oracle Data Shape
 

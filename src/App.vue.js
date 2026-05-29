@@ -177,12 +177,12 @@ ionItem;
 // @ts-ignore
 const __VLS_98 = __VLS_asFunctionalComponent1(__VLS_97, new __VLS_97({
     button: true,
-    routerLink: "/about",
+    routerLink: "/truths",
     routerDirection: "forward",
 }));
 const __VLS_99 = __VLS_98({
     button: true,
-    routerLink: "/about",
+    routerLink: "/truths",
     routerDirection: "forward",
 }, ...__VLS_functionalComponentArgsRest(__VLS_98));
 const { default: __VLS_102 } = __VLS_100.slots;
@@ -195,20 +195,44 @@ const __VLS_105 = __VLS_104({}, ...__VLS_functionalComponentArgsRest(__VLS_104))
 const { default: __VLS_108 } = __VLS_106.slots;
 var __VLS_106;
 var __VLS_100;
+let __VLS_109;
+/** @ts-ignore @type { | typeof __VLS_components.ionItem | typeof __VLS_components.IonItem | typeof __VLS_components['ion-item'] | typeof __VLS_components.ionItem | typeof __VLS_components.IonItem | typeof __VLS_components['ion-item']} */
+ionItem;
+// @ts-ignore
+const __VLS_110 = __VLS_asFunctionalComponent1(__VLS_109, new __VLS_109({
+    button: true,
+    routerLink: "/about",
+    routerDirection: "forward",
+}));
+const __VLS_111 = __VLS_110({
+    button: true,
+    routerLink: "/about",
+    routerDirection: "forward",
+}, ...__VLS_functionalComponentArgsRest(__VLS_110));
+const { default: __VLS_114 } = __VLS_112.slots;
+let __VLS_115;
+/** @ts-ignore @type { | typeof __VLS_components.ionLabel | typeof __VLS_components.IonLabel | typeof __VLS_components['ion-label'] | typeof __VLS_components.ionLabel | typeof __VLS_components.IonLabel | typeof __VLS_components['ion-label']} */
+ionLabel;
+// @ts-ignore
+const __VLS_116 = __VLS_asFunctionalComponent1(__VLS_115, new __VLS_115({}));
+const __VLS_117 = __VLS_116({}, ...__VLS_functionalComponentArgsRest(__VLS_116));
+const { default: __VLS_120 } = __VLS_118.slots;
+var __VLS_118;
+var __VLS_112;
 var __VLS_46;
 var __VLS_40;
 var __VLS_34;
 var __VLS_10;
-let __VLS_109;
+let __VLS_121;
 /** @ts-ignore @type { | typeof __VLS_components.ionRouterOutlet | typeof __VLS_components.IonRouterOutlet | typeof __VLS_components['ion-router-outlet']} */
 ionRouterOutlet;
 // @ts-ignore
-const __VLS_110 = __VLS_asFunctionalComponent1(__VLS_109, new __VLS_109({
+const __VLS_122 = __VLS_asFunctionalComponent1(__VLS_121, new __VLS_121({
     id: "main-content",
 }));
-const __VLS_111 = __VLS_110({
+const __VLS_123 = __VLS_122({
     id: "main-content",
-}, ...__VLS_functionalComponentArgsRest(__VLS_110));
+}, ...__VLS_functionalComponentArgsRest(__VLS_122));
 var __VLS_3;
 const __VLS_export = (await import('vue')).defineComponent({});
 export default {};

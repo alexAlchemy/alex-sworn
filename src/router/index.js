@@ -6,6 +6,8 @@ import HistoryPage from '../views/HistoryPage.vue';
 import HomePage from '../views/HomePage.vue';
 import RandomTableDetail from '../views/RandomTableDetail.vue';
 import RandomTableList from '../views/RandomTableList.vue';
+import WorldTruthDetailPage from '../views/WorldTruthDetailPage.vue';
+import WorldTruthListPage from '../views/WorldTruthListPage.vue';
 const routes = [
     {
         path: '/',
@@ -36,6 +38,16 @@ const routes = [
         path: '/assets/:id',
         name: 'AssetDetail',
         component: AssetDetailPage
+    },
+    {
+        path: '/truths',
+        name: 'WorldTruthList',
+        component: WorldTruthListPage
+    },
+    {
+        path: '/truths/:id',
+        name: 'WorldTruthDetail',
+        component: WorldTruthDetailPage
     },
     {
         path: '/about',

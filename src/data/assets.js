@@ -51,14 +51,21 @@ const toGameAsset = (asset, group, system) => {
     };
 };
 const collectAssets = (groups, system) => {
+    if (!groups || typeof groups !== 'object') {
+        return [];
+    }
     const dataGroups = (Array.isArray(groups) ? groups : Object.values(groups));
     return dataGroups.flatMap((group) => {
         const groupName = titleize(group.Display?.Title ?? group.Name ?? 'Assets');
         return group.Assets?.map((asset) => toGameAsset(asset, groupName, system)).filter((asset) => Boolean(asset)) ?? [];
     });
 };
+const getAssetTypes = (data) => {
+    const root = data;
+    return root['Asset Types'] ?? root.default?.['Asset Types'];
+};
 export const gameAssets = [
-    ...collectAssets(ironsworn.Assets, 'ironsworn'),
-    ...collectAssets(starforged.Assets, 'starforged')
+    ...collectAssets(getAssetTypes(ironsworn), 'ironsworn'),
+    ...collectAssets(getAssetTypes(starforged), 'starforged')
 ];
 export const findAsset = (id) => gameAssets.find((asset) => asset.id === id);

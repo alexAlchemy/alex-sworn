@@ -205,9 +205,13 @@ const collectOracleTables = (nodes, system) => {
     visit(nodes);
     return tables;
 };
+const getOracleCategories = (data) => {
+    const root = data;
+    return root['Oracle Categories'] ?? root.default?.['Oracle Categories'];
+};
 const importedTables = [
-    ...collectOracleTables(ironsworn['Oracle Categories'], 'ironsworn'),
-    ...collectOracleTables(starforged['Oracle Categories'], 'starforged')
+    ...collectOracleTables(getOracleCategories(ironsworn), 'ironsworn'),
+    ...collectOracleTables(getOracleCategories(starforged), 'starforged')
 ];
 export const oracleTables = [...actionRollTables, ...askOracleTables, ...importedTables, ...customTables];
 export const randomTables = oracleTables.filter((table) => table.kind === 'oracle' || table.kind === 'ask-oracle');

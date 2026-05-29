@@ -134,6 +134,10 @@ const toGameAsset = (asset: DataforgedAsset, group: string, system: AssetSystem)
 };
 
 const collectAssets = (groups: unknown, system: AssetSystem) => {
+  if (!groups || typeof groups !== 'object') {
+    return [];
+  }
+
   const dataGroups = (Array.isArray(groups) ? groups : Object.values(groups as Record<string, unknown>)) as DataforgedAssetGroup[];
 
   return dataGroups.flatMap((group) => {
@@ -144,9 +148,14 @@ const collectAssets = (groups: unknown, system: AssetSystem) => {
   });
 };
 
+const getAssetTypes = (data: unknown) => {
+  const root = data as { 'Asset Types'?: unknown; default?: { 'Asset Types'?: unknown } };
+  return root['Asset Types'] ?? root.default?.['Asset Types'];
+};
+
 export const gameAssets: readonly GameAsset[] = [
-  ...collectAssets(ironsworn.Assets, 'ironsworn'),
-  ...collectAssets(starforged.Assets, 'starforged')
+  ...collectAssets(getAssetTypes(ironsworn), 'ironsworn'),
+  ...collectAssets(getAssetTypes(starforged), 'starforged')
 ];
 
 export const findAsset = (id: string) => gameAssets.find((asset) => asset.id === id);

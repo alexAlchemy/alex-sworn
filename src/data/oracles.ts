@@ -351,9 +351,14 @@ const collectOracleTables = (nodes: unknown, system: Exclude<OracleSystem, 'cust
   return tables;
 };
 
+const getOracleCategories = (data: unknown) => {
+  const root = data as { 'Oracle Categories'?: unknown; default?: { 'Oracle Categories'?: unknown } };
+  return root['Oracle Categories'] ?? root.default?.['Oracle Categories'];
+};
+
 const importedTables = [
-  ...collectOracleTables(ironsworn['Oracle Categories'], 'ironsworn'),
-  ...collectOracleTables(starforged['Oracle Categories'], 'starforged')
+  ...collectOracleTables(getOracleCategories(ironsworn), 'ironsworn'),
+  ...collectOracleTables(getOracleCategories(starforged), 'starforged')
 ];
 
 export const oracleTables: RollableTable[] = [...actionRollTables, ...askOracleTables, ...importedTables, ...customTables];
