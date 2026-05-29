@@ -16,6 +16,7 @@ export interface OracleTable {
   preRollForm?: PreRollFormConfig;
   title: string;
   category: string;
+  description?: string;
   die: number;
   entries: readonly OracleEntry[];
 }
@@ -27,6 +28,7 @@ export interface ActionRollTable {
   preRollForm: PreRollFormConfig;
   title: string;
   category: string;
+  description?: string;
 }
 
 export interface AskOracleOption {
@@ -42,6 +44,7 @@ export interface AskOracleTable {
   preRollForm: PreRollFormConfig;
   title: string;
   category: string;
+  description?: string;
   die: number;
   odds: readonly AskOracleOption[];
 }
@@ -63,6 +66,7 @@ export interface AskOraclePayload {
 export type PreRollPayload = ActionRollPayload | AskOraclePayload;
 
 export type RollableTable = OracleTable | ActionRollTable | AskOracleTable;
+export type BrowsableTable = OracleTable | AskOracleTable;
 
 export interface OracleRollResult {
   kind: 'oracle';
@@ -102,6 +106,8 @@ type DataforgedOracle = {
   Display?: {
     Title?: string;
   };
+  Description?: unknown;
+  Summary?: unknown;
   Category?: string;
   Table?: DataforgedRow[];
   Oracles?: DataforgedOracle[];
@@ -114,6 +120,40 @@ export const systemLabels: Record<OracleSystem | 'all', string> = {
   custom: 'Custom'
 };
 
+export const allCategory = 'All';
+
+export const categoryOrders: Record<Exclude<OracleSystem, 'custom'>, readonly string[]> = {
+  ironsworn: [
+    allCategory,
+    'Core',
+    'Moves',
+    'Settlement',
+    'Place',
+    'Character',
+    'Name',
+    'Turning Point',
+    'Delve',
+    'Threat'
+  ],
+  starforged: [
+    allCategory,
+    'Core',
+    'Moves',
+    'Space',
+    'Settlements',
+    'Planets',
+    'Characters',
+    'Starships',
+    'Factions',
+    'Derelicts',
+    'Vaults',
+    'Creatures',
+    'Location Themes',
+    'Character Creation',
+    'Misc'
+  ]
+};
+
 const rollDie = (sides: number) => Math.floor(Math.random() * sides) + 1;
 
 const actionRollTables: ActionRollTable[] = [
@@ -123,7 +163,8 @@ const actionRollTables: ActionRollTable[] = [
     kind: 'action-roll',
     preRollForm: { component: 'ActionRollForm' },
     title: 'Action Roll',
-    category: 'Core'
+    category: 'Core',
+    description: 'Roll an action die plus a modifier against two challenge dice to resolve an uncertain action.'
   },
   {
     id: 'starforged-action-roll',
@@ -131,7 +172,8 @@ const actionRollTables: ActionRollTable[] = [
     kind: 'action-roll',
     preRollForm: { component: 'ActionRollForm' },
     title: 'Action Roll',
-    category: 'Core'
+    category: 'Core',
+    description: 'Roll an action die plus a modifier against two challenge dice to resolve an uncertain action.'
   }
 ];
 
@@ -143,6 +185,7 @@ const askOracleTables: AskOracleTable[] = [
     preRollForm: { component: 'AskOracleForm' },
     title: 'Ask the Oracle',
     category: 'Moves',
+    description: 'Use this move when you have a yes/no question or want to leave an uncertain detail to fate.',
     die: 100,
     odds: [
       { id: 'almost-certain', label: 'Almost Certain', yes: [{ min: 11, max: 100, result: 'Yes' }] },
@@ -159,6 +202,7 @@ const askOracleTables: AskOracleTable[] = [
     preRollForm: { component: 'AskOracleForm' },
     title: 'Ask the Oracle',
     category: 'Moves',
+    description: 'Use this move when you have a yes/no question or want to leave an uncertain detail to fate.',
     die: 100,
     odds: [
       { id: 'almost-certain', label: 'Almost Certain', yes: [{ min: 1, max: 90, result: 'Yes' }] },
@@ -177,6 +221,7 @@ const customTables: OracleTable[] = [
     kind: 'oracle',
     title: 'Scene Tension',
     category: 'Play Aid',
+    description: 'A simple custom table for setting the pressure level of a scene.',
     die: 20,
     entries: [
       { min: 1, max: 4, result: 'Quiet, but watchful' },
@@ -216,6 +261,22 @@ const getCategory = (sourceId: string | undefined, fallback: string | undefined)
   return categoryOverrides[topLevel] ?? titleize(topLevel);
 };
 
+const getTitle = (node: DataforgedOracle) => {
+  const baseTitle = titleize(node.Display?.Title ?? node.Name ?? 'Oracle');
+  const oraclePath = node.$id?.split('/Oracles/')[1]?.split('/') ?? [];
+  const parentName = oraclePath.length > 2 ? titleize(oraclePath.at(-2) ?? '') : '';
+
+  if (node.$id?.includes('/Settlement/Name/') && baseTitle !== 'Name') {
+    return `Settlement Name: ${baseTitle}`;
+  }
+
+  if (parentName && (baseTitle.length <= 2 || ['Prefix', 'Suffix'].includes(baseTitle))) {
+    return `${parentName} ${baseTitle}`;
+  }
+
+  return baseTitle;
+};
+
 const getResultText = (row: DataforgedRow) => {
   const result = cleanText(row.Result);
   const summary = cleanText(row.Summary);
@@ -225,6 +286,15 @@ const getResultText = (row: DataforgedRow) => {
   }
 
   return result;
+};
+
+const getDescription = (node: DataforgedOracle) => {
+  if (node.$id === 'Ironsworn/Oracles/Settlement/Name/Something_Else') {
+    return 'A settlement-name source for unusual inspirations such as trade goods, founders, gods, relics, or notable local history.';
+  }
+
+  const description = cleanText(node.Description ?? node.Summary);
+  return description.length > 0 ? description : undefined;
 };
 
 const toOracleTable = (node: DataforgedOracle, system: Exclude<OracleSystem, 'custom'>): OracleTable | null => {
@@ -244,8 +314,9 @@ const toOracleTable = (node: DataforgedOracle, system: Exclude<OracleSystem, 'cu
     sourceId: node.$id,
     system,
     kind: 'oracle',
-    title: titleize(node.Name ?? node.Display?.Title ?? 'Oracle'),
+    title: getTitle(node),
     category: getCategory(node.$id, node.Category),
+    description: getDescription(node),
     die: Math.max(...entries.map((entry) => entry.max)),
     entries
   };
@@ -286,6 +357,11 @@ const importedTables = [
 ];
 
 export const oracleTables: RollableTable[] = [...actionRollTables, ...askOracleTables, ...importedTables, ...customTables];
+export const randomTables: BrowsableTable[] = oracleTables.filter(
+  (table): table is BrowsableTable => table.kind === 'oracle' || table.kind === 'ask-oracle'
+);
+
+export const findRandomTable = (id: string) => randomTables.find((table) => table.id === id);
 
 export const rollOracle = (table: OracleTable): OracleRollResult => {
   const roll = rollDie(table.die);

@@ -43,8 +43,8 @@ const submit = () => {
 <style scoped>
 .pre-roll-form {
   display: grid;
-  gap: 12px;
-  padding: 10px 12px 24px;
+  gap: 8px;
+  padding: 8px 12px 16px;
 }
 
 .sheet-handle {
@@ -57,7 +57,7 @@ const submit = () => {
 
 header {
   display: grid;
-  gap: 4px;
+  gap: 2px;
   padding: 0 8px;
 }
 
@@ -75,12 +75,12 @@ h2 {
 
 h2 {
   color: #1d252c;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 .odds-list {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .odds-option {
@@ -92,7 +92,7 @@ h2 {
   display: flex;
   font-weight: 700;
   gap: 10px;
-  min-height: 42px;
-  padding: 8px 12px;
+  min-height: 44px;
+  padding: 0 12px;
 }
 </style>

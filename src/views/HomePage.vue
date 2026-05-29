@@ -14,11 +14,10 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
+    <ion-content ref="contentRef">
       <main class="home-shell">
         <section class="roll-panel" aria-live="polite">
           <div class="roll-copy">
-            <p class="eyebrow">{{ systemLabels[selectedTable.system] }} / {{ selectedTable.category }}</p>
             <h1>{{ selectedTable.title }}</h1>
             <p class="result">{{ currentResult ? getRollResultText(currentResult) : 'Tap a row to roll.' }}</p>
           </div>
@@ -35,6 +34,19 @@
           :debounce="120"
         />
 
+        <nav class="category-rail" aria-label="Table families">
+          <button
+            v-for="category in categoryOptions"
+            :key="category"
+            type="button"
+            class="category-chip"
+            :class="{ active: category === selectedCategory }"
+            @click="selectedCategory = category"
+          >
+            {{ category }}
+          </button>
+        </nav>
+
         <section class="oracle-grid">
           <button
             v-for="table in filteredTables"
@@ -44,8 +56,18 @@
             :class="{ active: table.id === selectedTable.id }"
             @click="rollRow(table)"
           >
-            <strong>{{ table.title }}</strong>
-            <span>{{ table.category }}</span>
+            <span class="oracle-label">
+              <strong>{{ table.title }}</strong>
+              <span>{{ table.category }}</span>
+            </span>
+            <button
+              type="button"
+              class="info-button"
+              :aria-label="`About ${table.title}`"
+              @click.stop="openInfo(table)"
+            >
+              <ion-icon :icon="informationCircleOutline" />
+            </button>
           </button>
         </section>
 
@@ -103,12 +125,36 @@
           />
         </ion-content>
       </ion-modal>
+
+      <ion-modal
+        :is-open="infoOpen"
+        :initial-breakpoint="1"
+        :breakpoints="[0, 1]"
+        class="info-modal"
+        @didDismiss="closeInfo"
+      >
+        <ion-content class="settings-sheet">
+          <section v-if="infoTable" class="info-content">
+            <div class="sheet-handle" aria-hidden="true"></div>
+            <p class="sheet-eyebrow">{{ systemLabels[infoTable.system] }} / {{ infoTable.category }}</p>
+            <h2>{{ infoTable.title }}</h2>
+            <p class="info-description">{{ infoTable.description ?? 'No description is available for this table yet.' }}</p>
+            <div class="info-actions">
+              <ion-button fill="outline" expand="block" :disabled="!canBrowseInfoTable" @click="goToInfoTable">
+                Go to table
+              </ion-button>
+              <ion-button expand="block" @click="rollInfoTable">Roll</ion-button>
+            </div>
+          </section>
+        </ion-content>
+      </ion-modal>
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   IonButton,
   IonButtons,
@@ -129,8 +175,11 @@ import {
   IonTitle,
   IonToolbar
 } from '@ionic/vue';
-import { settingsOutline } from 'ionicons/icons';
+import { informationCircleOutline, settingsOutline } from 'ionicons/icons';
 import {
+  allCategory,
+  categoryOrders,
+  findRandomTable,
   getRollResultText,
   getRollValueLabel,
   getUnrolledLabel,
@@ -147,11 +196,16 @@ import ActionRollForm from '../components/pre-roll/ActionRollForm.vue';
 import AskOracleForm from '../components/pre-roll/AskOracleForm.vue';
 
 const search = ref('');
+const router = useRouter();
 const selectedTable = ref(oracleTables[0]);
+const selectedCategory = ref(allCategory);
 const currentResult = ref<RollResult | null>(null);
+const contentRef = ref<InstanceType<typeof IonContent> | null>(null);
 const settingsOpen = ref(false);
 const preRollOpen = ref(false);
 const currentPreRollTable = ref<RollableTable | null>(null);
+const infoOpen = ref(false);
+const infoTable = ref<RollableTable | null>(null);
 const { addRoll } = useRollHistory();
 const { selectedSystem, includeCustom, setSelectedSystem, setIncludeCustom } = useOracleSettings();
 
@@ -165,22 +219,43 @@ const currentPreRollComponent = computed(() => {
   return formName ? preRollForms[formName] : null;
 });
 
+const categoryOptions = computed(() => {
+  const available = new Set(
+    oracleTables
+      .filter((table) => table.system === selectedSystem.value || (includeCustom.value && table.system === 'custom'))
+      .map((table) => table.category)
+  );
+
+  const ordered = categoryOrders[selectedSystem.value].filter(
+    (category) => category === allCategory || available.has(category)
+  );
+  const extras = [...available].filter((category) => !ordered.includes(category)).sort();
+
+  return [...ordered, ...extras];
+});
+
 const filteredTables = computed(() => {
   const query = search.value.trim().toLowerCase();
 
   return oracleTables.filter((table) => {
     const matchesSystem = table.system === selectedSystem.value || (includeCustom.value && table.system === 'custom');
+    const matchesCategory = selectedCategory.value === allCategory || table.category === selectedCategory.value;
     const matchesQuery =
       !query ||
       table.title.toLowerCase().includes(query) ||
       table.category.toLowerCase().includes(query) ||
       systemLabels[table.system].toLowerCase().includes(query);
 
-    return matchesSystem && matchesQuery;
+    return matchesSystem && matchesCategory && matchesQuery;
   });
 });
 
-watch([selectedSystem, includeCustom], () => {
+watch([selectedSystem, includeCustom, selectedCategory], () => {
+  if (!categoryOptions.value.includes(selectedCategory.value)) {
+    selectedCategory.value = allCategory;
+    return;
+  }
+
   if (!filteredTables.value.some((table) => table.id === selectedTable.value.id)) {
     selectedTable.value = filteredTables.value[0] ?? oracleTables[0];
     currentResult.value = null;
@@ -195,9 +270,16 @@ const handleIncludeCustomChange = (event: CustomEvent<{ checked: boolean }>) => 
   setIncludeCustom(event.detail.checked);
 };
 
+const scrollToResult = () => {
+  requestAnimationFrame(() => {
+    contentRef.value?.$el.scrollToTop(260);
+  });
+};
+
 const completeRoll = (table: RollableTable, payload?: PreRollPayload) => {
   currentResult.value = rollTable(table, payload);
   addRoll(table, currentResult.value);
+  scrollToResult();
 };
 
 const requestRoll = (table: RollableTable) => {
@@ -216,6 +298,39 @@ const rollSelectedTable = () => {
 
 const rollRow = (table: RollableTable) => {
   selectedTable.value = table;
+  requestRoll(table);
+};
+
+const canBrowseInfoTable = computed(() => Boolean(infoTable.value && findRandomTable(infoTable.value.id)));
+
+const openInfo = (table: RollableTable) => {
+  infoTable.value = table;
+  infoOpen.value = true;
+};
+
+const closeInfo = () => {
+  infoOpen.value = false;
+  infoTable.value = null;
+};
+
+const goToInfoTable = () => {
+  if (!infoTable.value || !canBrowseInfoTable.value) {
+    return;
+  }
+
+  router.push({ name: 'RandomTableDetail', params: { id: infoTable.value.id } });
+  infoOpen.value = false;
+};
+
+const rollInfoTable = () => {
+  const table = infoTable.value;
+
+  if (!table) {
+    return;
+  }
+
+  selectedTable.value = table;
+  infoOpen.value = false;
   requestRoll(table);
 };
 
@@ -262,16 +377,6 @@ const closePreRoll = () => {
   gap: 10px;
 }
 
-.eyebrow {
-  color: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0;
-  margin: 0;
-  opacity: 0.78;
-  text-transform: uppercase;
-}
-
 h1,
 h2,
 p {
@@ -283,7 +388,7 @@ h1 {
   display: flex;
   font-size: clamp(1.7rem, 8vw, 2.8rem);
   line-height: 1.04;
-  min-height: 2.1em;
+  min-height: 1.95em;
 }
 
 h2 {
@@ -355,6 +460,15 @@ h2 {
   width: 100%;
 }
 
+.oracle-label {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  justify-content: space-between;
+  min-width: 0;
+}
+
 .oracle-card.active {
   background: #f1e2c8;
   border-color: #9b6a3a;
@@ -365,10 +479,23 @@ h2 {
   line-height: 1.2;
 }
 
-.oracle-card span:last-child {
+.oracle-label span {
   color: #56616a;
   flex: 0 0 auto;
   font-size: 0.9rem;
+}
+
+.info-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: #56616a;
+  display: inline-flex;
+  flex: 0 0 36px;
+  font-size: 1.25rem;
+  height: 36px;
+  justify-content: center;
+  margin: -8px -8px -8px 0;
 }
 
 ion-content {
@@ -379,6 +506,39 @@ ion-searchbar {
   --background: #fffaf1;
   --border-radius: 8px;
   padding-inline: 0;
+}
+
+.category-rail {
+  display: flex;
+  gap: 8px;
+  margin: -4px -14px 0;
+  overflow-x: auto;
+  padding: 0 14px 2px;
+  scrollbar-width: none;
+  white-space: nowrap;
+}
+
+.category-rail::-webkit-scrollbar {
+  display: none;
+}
+
+.category-chip {
+  background: #eee4d4;
+  border: 1px solid #d5c8b5;
+  border-radius: 999px;
+  color: #334048;
+  flex: 0 0 auto;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 750;
+  min-height: 34px;
+  padding: 6px 13px;
+}
+
+.category-chip.active {
+  background: #2f604f;
+  border-color: #2f604f;
+  color: #fffaf1;
 }
 
 .settings-sheet {
@@ -404,7 +564,47 @@ ion-searchbar {
 }
 
 .pre-roll-modal {
-  --height: min(430px, 86vh);
+  --height: min(520px, 92vh);
+}
+
+.info-modal {
+  --height: min(380px, 82vh);
+}
+
+.info-content {
+  display: grid;
+  gap: 10px;
+  padding: 10px 12px 20px;
+}
+
+.sheet-eyebrow,
+.info-content h2,
+.info-description {
+  margin: 0;
+}
+
+.sheet-eyebrow {
+  color: #56616a;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.info-content h2 {
+  color: #1d252c;
+  font-size: 1.3rem;
+}
+
+.info-description {
+  color: #3f4a52;
+  line-height: 1.45;
+}
+
+.info-actions {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 4px;
 }
 
 @media (min-width: 720px) {

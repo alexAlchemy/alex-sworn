@@ -3,6 +3,8 @@
 import { ref } from 'vue';
 const emit = defineEmits();
 const modifier = ref(0);
+const penalties = [-6, -5, -4, -3, -2, -1, 0];
+const bonuses = [0, 1, 2, 3, 4, 5, 6];
 const submit = () => {
     emit('submit', {
         modifier: Number(modifier.value) || 0
@@ -19,6 +21,14 @@ let __VLS_components;
 let __VLS_intrinsics;
 let __VLS_directives;
 /** @type {__VLS_StyleScopedClasses['eyebrow']} */ ;
+/** @type {__VLS_StyleScopedClasses['modifier-block']} */ ;
+/** @type {__VLS_StyleScopedClasses['modifier-button']} */ ;
+/** @type {__VLS_StyleScopedClasses['modifier-button']} */ ;
+/** @type {__VLS_StyleScopedClasses['modifier-button']} */ ;
+/** @type {__VLS_StyleScopedClasses['penalty']} */ ;
+/** @type {__VLS_StyleScopedClasses['modifier-button']} */ ;
+/** @type {__VLS_StyleScopedClasses['bonus']} */ ;
+/** @type {__VLS_StyleScopedClasses['active']} */ ;
 __VLS_asFunctionalElement1(__VLS_intrinsics.form, __VLS_intrinsics.form)({
     ...{ onSubmit: (__VLS_ctx.submit) },
     ...{ class: "pre-roll-form" },
@@ -35,52 +45,78 @@ __VLS_asFunctionalElement1(__VLS_intrinsics.p, __VLS_intrinsics.p)({
 });
 /** @type {__VLS_StyleScopedClasses['eyebrow']} */ ;
 __VLS_asFunctionalElement1(__VLS_intrinsics.h2, __VLS_intrinsics.h2)({});
+__VLS_asFunctionalElement1(__VLS_intrinsics.section, __VLS_intrinsics.section)({
+    ...{ class: "modifier-block" },
+});
+/** @type {__VLS_StyleScopedClasses['modifier-block']} */ ;
+__VLS_asFunctionalElement1(__VLS_intrinsics.p, __VLS_intrinsics.p)({});
+__VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
+    ...{ class: "modifier-grid" },
+});
+/** @type {__VLS_StyleScopedClasses['modifier-grid']} */ ;
+for (const [value] of __VLS_vFor((__VLS_ctx.penalties))) {
+    __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
+        ...{ onClick: (...[$event]) => {
+                __VLS_ctx.modifier = value;
+                // @ts-ignore
+                [submit, penalties, modifier,];
+            } },
+        key: (value),
+        type: "button",
+        ...{ class: "modifier-button penalty" },
+        ...{ class: ({ active: __VLS_ctx.modifier === value }) },
+    });
+    /** @type {__VLS_StyleScopedClasses['modifier-button']} */ ;
+    /** @type {__VLS_StyleScopedClasses['penalty']} */ ;
+    /** @type {__VLS_StyleScopedClasses['active']} */ ;
+    (value);
+    // @ts-ignore
+    [modifier,];
+}
+__VLS_asFunctionalElement1(__VLS_intrinsics.section, __VLS_intrinsics.section)({
+    ...{ class: "modifier-block" },
+});
+/** @type {__VLS_StyleScopedClasses['modifier-block']} */ ;
+__VLS_asFunctionalElement1(__VLS_intrinsics.p, __VLS_intrinsics.p)({});
+__VLS_asFunctionalElement1(__VLS_intrinsics.div, __VLS_intrinsics.div)({
+    ...{ class: "modifier-grid" },
+});
+/** @type {__VLS_StyleScopedClasses['modifier-grid']} */ ;
+for (const [value] of __VLS_vFor((__VLS_ctx.bonuses))) {
+    __VLS_asFunctionalElement1(__VLS_intrinsics.button, __VLS_intrinsics.button)({
+        ...{ onClick: (...[$event]) => {
+                __VLS_ctx.modifier = value;
+                // @ts-ignore
+                [modifier, bonuses,];
+            } },
+        key: (value),
+        type: "button",
+        ...{ class: "modifier-button bonus" },
+        ...{ class: ({ active: __VLS_ctx.modifier === value }) },
+    });
+    /** @type {__VLS_StyleScopedClasses['modifier-button']} */ ;
+    /** @type {__VLS_StyleScopedClasses['bonus']} */ ;
+    /** @type {__VLS_StyleScopedClasses['active']} */ ;
+    (value);
+    // @ts-ignore
+    [modifier,];
+}
 let __VLS_0;
-/** @ts-ignore @type { | typeof __VLS_components.ionItem | typeof __VLS_components.IonItem | typeof __VLS_components['ion-item'] | typeof __VLS_components.ionItem | typeof __VLS_components.IonItem | typeof __VLS_components['ion-item']} */
-ionItem;
-// @ts-ignore
-const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({}));
-const __VLS_2 = __VLS_1({}, ...__VLS_functionalComponentArgsRest(__VLS_1));
-const { default: __VLS_5 } = __VLS_3.slots;
-let __VLS_6;
-/** @ts-ignore @type { | typeof __VLS_components.ionInput | typeof __VLS_components.IonInput | typeof __VLS_components['ion-input']} */
-ionInput;
-// @ts-ignore
-const __VLS_7 = __VLS_asFunctionalComponent1(__VLS_6, new __VLS_6({
-    modelValue: (__VLS_ctx.modifier),
-    modelModifiers: { number: true, },
-    label: "Modifier",
-    labelPlacement: "stacked",
-    type: "number",
-    inputmode: "numeric",
-}));
-const __VLS_8 = __VLS_7({
-    modelValue: (__VLS_ctx.modifier),
-    modelModifiers: { number: true, },
-    label: "Modifier",
-    labelPlacement: "stacked",
-    type: "number",
-    inputmode: "numeric",
-}, ...__VLS_functionalComponentArgsRest(__VLS_7));
-// @ts-ignore
-[submit, modifier,];
-var __VLS_3;
-let __VLS_11;
 /** @ts-ignore @type { | typeof __VLS_components.ionButton | typeof __VLS_components.IonButton | typeof __VLS_components['ion-button'] | typeof __VLS_components.ionButton | typeof __VLS_components.IonButton | typeof __VLS_components['ion-button']} */
 ionButton;
 // @ts-ignore
-const __VLS_12 = __VLS_asFunctionalComponent1(__VLS_11, new __VLS_11({
+const __VLS_1 = __VLS_asFunctionalComponent1(__VLS_0, new __VLS_0({
     expand: "block",
     type: "submit",
 }));
-const __VLS_13 = __VLS_12({
+const __VLS_2 = __VLS_1({
     expand: "block",
     type: "submit",
-}, ...__VLS_functionalComponentArgsRest(__VLS_12));
-const { default: __VLS_16 } = __VLS_14.slots;
+}, ...__VLS_functionalComponentArgsRest(__VLS_1));
+const { default: __VLS_5 } = __VLS_3.slots;
 // @ts-ignore
 [];
-var __VLS_14;
+var __VLS_3;
 // @ts-ignore
 [];
 const __VLS_export = (await import('vue')).defineComponent({

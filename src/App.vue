@@ -15,6 +15,12 @@
             <ion-item button router-link="/history" router-direction="forward">
               <ion-label>History</ion-label>
             </ion-item>
+            <ion-item button router-link="/tables" router-direction="forward">
+              <ion-label>Tables</ion-label>
+            </ion-item>
+            <ion-item button router-link="/assets" router-direction="forward">
+              <ion-label>Assets</ion-label>
+            </ion-item>
             <ion-item button router-link="/about" router-direction="forward">
               <ion-label>About</ion-label>
             </ion-item>

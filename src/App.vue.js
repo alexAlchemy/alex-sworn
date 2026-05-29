@@ -129,12 +129,12 @@ ionItem;
 // @ts-ignore
 const __VLS_74 = __VLS_asFunctionalComponent1(__VLS_73, new __VLS_73({
     button: true,
-    routerLink: "/about",
+    routerLink: "/tables",
     routerDirection: "forward",
 }));
 const __VLS_75 = __VLS_74({
     button: true,
-    routerLink: "/about",
+    routerLink: "/tables",
     routerDirection: "forward",
 }, ...__VLS_functionalComponentArgsRest(__VLS_74));
 const { default: __VLS_78 } = __VLS_76.slots;
@@ -147,20 +147,68 @@ const __VLS_81 = __VLS_80({}, ...__VLS_functionalComponentArgsRest(__VLS_80));
 const { default: __VLS_84 } = __VLS_82.slots;
 var __VLS_82;
 var __VLS_76;
+let __VLS_85;
+/** @ts-ignore @type { | typeof __VLS_components.ionItem | typeof __VLS_components.IonItem | typeof __VLS_components['ion-item'] | typeof __VLS_components.ionItem | typeof __VLS_components.IonItem | typeof __VLS_components['ion-item']} */
+ionItem;
+// @ts-ignore
+const __VLS_86 = __VLS_asFunctionalComponent1(__VLS_85, new __VLS_85({
+    button: true,
+    routerLink: "/assets",
+    routerDirection: "forward",
+}));
+const __VLS_87 = __VLS_86({
+    button: true,
+    routerLink: "/assets",
+    routerDirection: "forward",
+}, ...__VLS_functionalComponentArgsRest(__VLS_86));
+const { default: __VLS_90 } = __VLS_88.slots;
+let __VLS_91;
+/** @ts-ignore @type { | typeof __VLS_components.ionLabel | typeof __VLS_components.IonLabel | typeof __VLS_components['ion-label'] | typeof __VLS_components.ionLabel | typeof __VLS_components.IonLabel | typeof __VLS_components['ion-label']} */
+ionLabel;
+// @ts-ignore
+const __VLS_92 = __VLS_asFunctionalComponent1(__VLS_91, new __VLS_91({}));
+const __VLS_93 = __VLS_92({}, ...__VLS_functionalComponentArgsRest(__VLS_92));
+const { default: __VLS_96 } = __VLS_94.slots;
+var __VLS_94;
+var __VLS_88;
+let __VLS_97;
+/** @ts-ignore @type { | typeof __VLS_components.ionItem | typeof __VLS_components.IonItem | typeof __VLS_components['ion-item'] | typeof __VLS_components.ionItem | typeof __VLS_components.IonItem | typeof __VLS_components['ion-item']} */
+ionItem;
+// @ts-ignore
+const __VLS_98 = __VLS_asFunctionalComponent1(__VLS_97, new __VLS_97({
+    button: true,
+    routerLink: "/about",
+    routerDirection: "forward",
+}));
+const __VLS_99 = __VLS_98({
+    button: true,
+    routerLink: "/about",
+    routerDirection: "forward",
+}, ...__VLS_functionalComponentArgsRest(__VLS_98));
+const { default: __VLS_102 } = __VLS_100.slots;
+let __VLS_103;
+/** @ts-ignore @type { | typeof __VLS_components.ionLabel | typeof __VLS_components.IonLabel | typeof __VLS_components['ion-label'] | typeof __VLS_components.ionLabel | typeof __VLS_components.IonLabel | typeof __VLS_components['ion-label']} */
+ionLabel;
+// @ts-ignore
+const __VLS_104 = __VLS_asFunctionalComponent1(__VLS_103, new __VLS_103({}));
+const __VLS_105 = __VLS_104({}, ...__VLS_functionalComponentArgsRest(__VLS_104));
+const { default: __VLS_108 } = __VLS_106.slots;
+var __VLS_106;
+var __VLS_100;
 var __VLS_46;
 var __VLS_40;
 var __VLS_34;
 var __VLS_10;
-let __VLS_85;
+let __VLS_109;
 /** @ts-ignore @type { | typeof __VLS_components.ionRouterOutlet | typeof __VLS_components.IonRouterOutlet | typeof __VLS_components['ion-router-outlet']} */
 ionRouterOutlet;
 // @ts-ignore
-const __VLS_86 = __VLS_asFunctionalComponent1(__VLS_85, new __VLS_85({
+const __VLS_110 = __VLS_asFunctionalComponent1(__VLS_109, new __VLS_109({
     id: "main-content",
 }));
-const __VLS_87 = __VLS_86({
+const __VLS_111 = __VLS_110({
     id: "main-content",
-}, ...__VLS_functionalComponentArgsRest(__VLS_86));
+}, ...__VLS_functionalComponentArgsRest(__VLS_110));
 var __VLS_3;
 const __VLS_export = (await import('vue')).defineComponent({});
 export default {};
